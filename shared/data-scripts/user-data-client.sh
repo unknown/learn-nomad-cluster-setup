@@ -28,6 +28,9 @@ case $CLOUD_ENV in
   azure)
     echo "CLOUD_ENV: azure"
     ;;
+  hcloud)
+    echo "CLOUD_ENV: hcloud"
+    ;;
   *)
     echo "CLOUD_ENV: not set"
     ;;

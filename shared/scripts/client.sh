@@ -7,7 +7,6 @@ CONFIGDIR=/ops/shared/config
 CONSULCONFIGDIR=/etc/consul.d
 NOMADCONFIGDIR=/etc/nomad.d
 CONSULTEMPLATECONFIGDIR=/etc/consul-template.d
-HOME_DIR=ubuntu
 
 # Wait for network
 sleep 15
@@ -30,6 +29,10 @@ case $CLOUD in
   azure)
     echo "CLOUD_ENV: azure"
     IP_ADDRESS=$(curl -s -H Metadata:true --noproxy "*" http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0?api-version=2021-12-13 | jq -r '.["privateIpAddress"]')
+    ;;
+  hcloud)
+    echo "CLOUD_ENV: hcloud"
+    IP_ADDRESS=$(curl http://169.254.169.254/hetzner/v1/metadata/public-ipv4)
     ;;
   *)
     echo "CLOUD_ENV: not set"
@@ -80,6 +83,6 @@ sudo cp $CONFIGDIR/consul-systemd-resolved.conf /etc/systemd/resolved.conf.d/con
 sudo systemctl restart systemd-resolved
 
 # Set env vars for tool CLIs
-echo "export VAULT_ADDR=http://$IP_ADDRESS:8200" | sudo tee --append /home/$HOME_DIR/.bashrc
-echo "export NOMAD_ADDR=http://$IP_ADDRESS:4646" | sudo tee --append /home/$HOME_DIR/.bashrc
-echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre"  | sudo tee --append /home/$HOME_DIR/.bashrc
+echo "export VAULT_ADDR=http://$IP_ADDRESS:8200" | sudo tee --append /$HOME/.bashrc
+echo "export NOMAD_ADDR=http://$IP_ADDRESS:4646" | sudo tee --append /$HOME/.bashrc
+echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre"  | sudo tee --append /$HOME/.bashrc
